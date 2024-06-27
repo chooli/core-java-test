@@ -1,3 +1,5 @@
+package core.java.algo.list;
+
 import java.util.*;
 import java.util.stream.IntStream;
 

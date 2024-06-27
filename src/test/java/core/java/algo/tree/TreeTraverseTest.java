@@ -1,3 +1,5 @@
+package core.java.algo.tree;
+
 import core.java.test.datastructure.tree.BinarySearchTree;
 import core.java.test.datastructure.tree.TreeNode;
 import org.junit.jupiter.api.Assertions;

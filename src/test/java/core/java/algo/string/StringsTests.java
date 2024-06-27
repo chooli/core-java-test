@@ -1,3 +1,5 @@
+package core.java.algo.string;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -105,7 +105,9 @@ class BFSTest extends CommonTest {
             }
             List<String> nextMutations = getNextMutations(gene, geneCharList);
             for (String nextMutation : nextMutations) {
-                if (nextMutation.equals(endGene)) break;
+                if (nextMutation.equals(endGene)) {
+                    break;
+                }
                 if (bankSet.contains(nextMutation) && !visited.contains(nextMutation)) {
                     queue.add(nextMutation);
                     visited.add(nextMutation);

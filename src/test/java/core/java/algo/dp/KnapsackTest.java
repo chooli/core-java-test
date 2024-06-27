@@ -2,15 +2,12 @@ package core.java.algo.dp;
 
 import core.java.CommonTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class KnapsackTest extends CommonTest {
 
     @Test
@@ -23,120 +20,157 @@ class KnapsackTest extends CommonTest {
             preCost1 = current;
         }
         int result = Math.min(preCost1, preCost2);
-        System.out.println("minimum cost to the top is " + result);
+        printf("minimum cost to the top is %s", result);
         assertTrue(true);
     }
 
     int min = Integer.MAX_VALUE;
+    int NOT_FOUND = 9999;
+    int numOfIteration = 0;
 
     @Test
-    void minimumCoinsToTarget() {
-//        int target = 12;
-      int[] coins = {1, 2, 3, 7, 9, 11};
-//        int count = 0;
-//        AtomicInteger min = new AtomicInteger(Integer.MAX_VALUE);
-//        minCoinsCount11(target, coins, count, min);
-//        int result12 = minCoinsCount12(target, coins);
-        //assertEquals(4, result12);
-        calculateCoins(10, coins, 0);
-        println(min);
+    void test() {
+        int target = 10;
+        int[] coins = {2, 3, 5};
+        //bruteforce(10, coins, 0);
+        //min = dp(target, coins);
+
+        //dfsBFNoReuse(target, IntStream.of(coins).boxed().toList(), 1);
+        min = dfsDPNoReuse(target, IntStream.of(coins).boxed().toList(), 0, new TreeSet<>(), new HashMap<>());
+        printf("min: %s, iteration: %s", min, numOfIteration);
         //min.set(Integer.MAX_VALUE);
         //minCoinsCount2(target, coins, count, min);
-        //assertEquals(2, min.get());
+        assertTrue(true);
     }
 
-    private void calculateCoins(int num, int[] coins, int count) {
+    private void dfsBF(int target, int[] coins, int count) {
         for (int coin : coins) {
-            if (num == coin) {
+            if (target == coin) {
                 min = Math.min(min, count+1);
                 return;
-            } else if (num > coin) {
-                calculateCoins(num - coin, coins, count+1);
+            } else if (target > coin) {
+                dfsBF(target - coin, coins, count+1);
             } else {
                 return;
             }
         }
     }
 
-    /**
-     * Bounded Knapsack
-     *
-     * @param target
-     * @param coins
-     * @param count
-     * @param min
-     */
-    private static void minCoinsCount11(int target, int[] coins, int count, AtomicInteger min) {
-        for (int coin : coins) {
-            if (target == coin || target == 1) {
-                min.set(Math.min(min.get(), count+1));
-                return;
-            } else if (target > coin) {
-                int[] newCoins = Arrays.stream(coins).filter(c -> c != coin).toArray();
-                minCoinsCount11(target - coin, newCoins, count+1, min);
-            }
-        }
-    }
-
-    private int minCoinsCount12(int target, int[] coins) {
-
-        Map<Integer, List<Set<Integer>>> possibleMap = new HashMap<>();
-        List<Set<Integer>> list = possibleMap.putIfAbsent(1, Arrays.asList(new HashSet<>()));
-        list.add(null);
-
-
-        AtomicInteger min = new AtomicInteger(Integer.MAX_VALUE);
+    private int dp(int target, int[] coins) {
+        int[] minMap = new int[target+1];
+        Arrays.fill(minMap, 9999);
+        minMap[0] = 0;
         for (int i=1; i<=target; i++) {
-            min.set(Integer.MAX_VALUE);
-            List<Set<Integer>> currentList = currentList = new ArrayList<>();
             for (int coin : coins) {
-                int prevTarget = i - coin;
-
-                if (i == coin) {
-                    currentList.add(Set.of(coin));
-                    min.set(1);
-                } else if (prevTarget > 0 && possibleMap.containsKey(prevTarget)) {
-                    List<Set<Integer>> preList = coinToList(coin, prevTarget, possibleMap.get(prevTarget), min);
-                    currentList.addAll(preList);
+                if (i >= coin) {
+                    int previous = minMap[i - coin];
+                    if (previous != target+1 && previous != -1) {
+                        minMap[i] = Math.min(minMap[i], previous + 1);
+                    }
+                    if (minMap[i] == 1){
+                        break;
+                    }
                 }
             }
-            possibleMap.put(i, currentList);
+            if (minMap[i] == target+1) minMap[i] = -1;
         }
-        return min.get() == Integer.MAX_VALUE ? 0 : min.get();
+        return minMap[target];
     }
 
-    private List<Set<Integer>> coinToList(int coin, int preTarget, List<Set<Integer>> prevList, AtomicInteger min) {
-        List<Set<Integer>> newList = new ArrayList<>();
-        for (Set<Integer> set : prevList) {
-            if (!set.contains(coin)) {
-                Set<Integer> newSet = new HashSet<>();
-                newSet.add(coin);
-                newSet.addAll(set);
-                newList.add(newSet);
-                min.set(Math.min(min.get(), newSet.size()));
-            }
+    private void dfsBFNoReuse(int target, List<Integer> coins, int count) {
+        if (coins.size() == 0) {
+            return;
         }
-        return newList;
-    }
-
-    /**
-     * Unbounded Knapsack
-     *
-     * @param target
-     * @param coins
-     * @param count
-     * @param min
-     */
-    private void minCoinsCount2(int target, int[] coins, int count, AtomicInteger min) {
         for (int coin : coins) {
             if (target == coin) {
-                min.set(Math.min(min.get(), count+1));
-                return;
-            } else if (target > coin) {
-                minCoinsCount2(target - coin, coins, count+1, min);
-            } else if (target < 1) {
-                return;
+                min = Math.min(min, count);
+            } else {
+                dfsBFNoReuse(target - coin, coins.stream().filter(c -> !c.equals(coin)).toList(), count + 1);
             }
+        }
+    }
+
+    private int dfsDPNoReuse(int target, List<Integer> coins, int count, Set<Integer> visited, Map<String, Integer> minMap) {
+        numOfIteration++;
+        if (target == 0) {
+            return count;
+        } else if (target < 0 || coins.size() == 0) {
+            return NOT_FOUND;
+        }
+        //memorization
+        String key = visited.toString();
+        if (minMap.containsKey(key)) {
+            return minMap.get(key);
+        }
+
+        int min = NOT_FOUND;
+        for (int coin : coins) {
+            visited.add(coin);
+            int result = dfsDPNoReuse(target - coin,
+                    coins.stream().filter(c -> !c.equals(coin)).toList(), count + 1, visited, minMap);
+            min = Math.min(min, result);
+            minMap.put(visited.toString(), min);
+            visited.remove(coin);
+        }
+        return min;
+    }
+
+    private char coinToChar(int coin) {
+        return (char)(coin+'0');
+    }
+
+    private int dpNoReuse(int target, int[] coins) {
+        int[] counts = new int[target + 1];
+        Map<Integer, List<List<Integer>>> coinsMap = new HashMap<>();
+        coinsMap.put(0, List.of(List.of()));
+        Arrays.fill(counts, NOT_FOUND);
+        counts[0] = 0;
+        for (int coin : coins) {
+            //take
+            for (int i=coin; i<=target; i++) {
+                int prevIdx = i-coin;
+                if (isCoinUsed(coin, prevIdx, coinsMap)) {
+                    continue;
+                }
+                counts[i] = Math.min(counts[i], 1 + counts[prevIdx]);
+                //add to used map
+                if (counts[i] < NOT_FOUND) {
+                    addCoinUsed(coin, i, prevIdx, coinsMap);
+                }
+            }
+        }
+
+        return counts[target] == NOT_FOUND ? -1 : counts[target];
+    }
+
+    private boolean isCoinUsed(int coin, int preIdx, Map<Integer, List<List<Integer>>> coinsMap) {
+        if (coinsMap.containsKey(preIdx)) {
+            for (List<Integer> list : coinsMap.get(preIdx)) {
+                if(!list.contains(coin)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void addCoinUsed(int coin, int idx, int preIdx, Map<Integer, List<List<Integer>>> coinsMap) {
+        if (coinsMap.containsKey(idx)) {
+            List<List<Integer>> list = coinsMap.get(idx);
+            List<Integer> newList = Collections.singletonList(coin);
+            list.add(newList);
+        } else {
+            List<Integer> coins;
+            List<List<Integer>> list = new ArrayList<>();
+            for (List<Integer> preList : coinsMap.get(preIdx)) {
+                coins = new ArrayList<>(List.of(coin));
+                if (!preList.contains(coin)) {
+                    coins.addAll(preList);
+                    list.add(coins);
+                }
+            }
+            coinsMap.put(idx, list);
         }
     }
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,6 +17,7 @@ class SimpleTest extends CommonTest {
     static String LEFT = "left";
     static String UP = "up";
     static String DONE = "done";
+    static int min = Integer.MAX_VALUE;
 
 
     @BeforeAll
@@ -34,23 +36,33 @@ class SimpleTest extends CommonTest {
         System.arraycopy(arr1, 0, newArr, 0, arr1.length);
         System.arraycopy(arr2, 0, newArr, arr1.length, arr2.length);
 
-        //** Int Array to List **/
+        //** Array to List **/
         // create list by array
-        List<Integer> intList = IntStream.of(arr1).boxed().toList();
-        printList(intList);
-        intList = Arrays.asList(arr3);
-        printList(intList);
-        List<Integer> sublist = new ArrayList<>(3);
+        List<Integer> intList = IntStream.of(arr1).boxed().toList(); //immutable
+        intList = IntStream.range(0, 10).boxed().toList();
+        intList = Arrays.asList(arr3);  //immutable
+        intList = new ArrayList<>(IntStream.of(arr1).boxed().toList()); //mutable
+        intList.add(999);
 
-        //** Int List to int Array
+        //** Int List to Array
         newArr = intList.stream().mapToInt(Integer::intValue).toArray();
         // create new array by array
         Integer[] array3 = intList.toArray(Integer[]::new);
 
+        //** char array to list  **/
+        char[] chars = {'a', 'b', 'c', 'd'};
+        List<Character> charList = String.valueOf(chars).chars().mapToObj(i -> (char)i).toList(); // immutable
+        charList = new ArrayList<>(String.valueOf(chars).chars().mapToObj(i -> (char)i).toList()); // mutable
+        charList.add('e');
+
         //** String array to List **/
         String[] array1 = {"a", "b", "c", "d"};
-        List<String> strList = new ArrayList<>(List.of(""));
-
+        List<String> strList = Arrays.asList(array1);  //immutable
+        strList = new ArrayList<>(Arrays.asList(array1)); //mutable
+        strList.add("e");
+        strList = new ArrayList<>(List.of("a", "b", "c"));
+        strList.add("d");
+        //** String list to array **/
         String[] array2 = strList.toArray(String[]::new);
         StringBuilder sb = new StringBuilder();
 
@@ -75,6 +87,11 @@ class SimpleTest extends CommonTest {
         set.clear();
         int[] setToInts = set.stream().mapToInt(Integer::intValue).toArray();
 
+        //** MAP **/
+        Map<String, Integer> map = new HashMap<>();
+        map.put("test", map.getOrDefault("test", 0) + 1);
+        map.computeIfPresent("test", (k,v) -> v-1);
+
         //** SWITCH CASE **/
         switch(str1) {
             case RIGHT:
@@ -91,16 +108,21 @@ class SimpleTest extends CommonTest {
         switch(Objects.requireNonNull(str)) {
             case "a" -> str += "-+";
             case "b" -> str += "+-";
-            case "c" -> str += "++";
+            case "c", "e" -> str += "++";
             default -> str += "--";
         }
 
         assertTrue(true);
     }
 
-    private int maxNum(int idx, int[] list, int max) {
-        max = Math.max(max, list[idx]);
-        if (idx < list.length-1) return maxNum(++idx, list, max);
-        return max;
+    private boolean isVowel(char c) {
+        switch(c) {
+            case 'a', 'e', 'i', 'o', 'u' -> {
+                return true;
+            }
+            default -> {
+                return false;
+            }
+        }
     }
 }

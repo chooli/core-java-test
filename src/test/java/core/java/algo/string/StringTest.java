@@ -1,14 +1,16 @@
-
+package core.java.algo.string;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LearningStringTest{
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class StringTest {
 
     @BeforeAll
     public void setup() {
@@ -16,7 +18,7 @@ public class LearningStringTest{
     }
 
     @Test
-    public void testExams() {
+    void test() {
 
         String s1 = "helello", s2 = "l";
         String[] strs = {"ca", "a"};
@@ -25,7 +27,6 @@ public class LearningStringTest{
         System.out.println( Math.ceil (_Y / 30));
 
         assertTrue(true);
-
     }
 
     @Test

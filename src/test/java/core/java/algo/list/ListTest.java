@@ -1,4 +1,4 @@
-
+package core.java.algo.list;
 
 import core.java.CommonTest;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class LearningListTest extends CommonTest {
+class ListTest extends CommonTest {
 
     @BeforeAll
     public void setup() {
@@ -19,7 +19,7 @@ public class LearningListTest extends CommonTest {
     }
 
     @Test
-    public void testExams() {
+    void testExams() {
 
         List<Integer> subExp = new LinkedList<>();
 

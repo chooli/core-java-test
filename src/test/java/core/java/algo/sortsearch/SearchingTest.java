@@ -1,4 +1,4 @@
-
+package core.java.algo.sortsearch;
 
 import core.java.CommonTest;
 import org.junit.jupiter.api.BeforeAll;

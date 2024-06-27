@@ -1,9 +1,26 @@
 package core.java;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
+
 import java.util.List;
 
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class CommonTest {
+
+    @BeforeAll
+    void setup() {
+        println("start");
+        println("------------------------------------");
+    }
+
+    @AfterAll
+    void end() {
+        println("");
+        println("------------------------------------");
+        println("end");
+    }
 
     protected static void printArray(int[] arr) {
         System.out.print("[");
@@ -71,5 +88,6 @@ public abstract class CommonTest {
 
     public void printf(String format, Object... args) {
         System.out.printf(format, args);
+        println("");
     }
 }

@@ -1,14 +1,16 @@
-
+package core.java.algo.list;
 
 import core.java.CommonTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LearningArrayTest extends CommonTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class MatrixTest extends CommonTest {
 
     @BeforeAll
     public void setup() {
@@ -16,7 +18,7 @@ public class LearningArrayTest extends CommonTest {
     }
 
     @Test
-    public void testExams() {
+    void test() {
 
         int[] intArr1 = {-1,3,0,0,0,0,0};
         int[] intArr2 = {0,0,1,2,3};

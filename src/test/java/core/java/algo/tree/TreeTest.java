@@ -1,10 +1,17 @@
-import core.java.CommonTest;
-import org.junit.jupiter.api.Test;
+package core.java.algo.tree;
 
-public class LearningTreeTest extends CommonTest {
+import core.java.CommonTest;
+import core.java.test.datastructure.tree.TreeNode;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TreeTest extends CommonTest {
 
     @Test
-    public void testExams() {
+    void test() {
 
         TreeNode t1 = new TreeNode(5);
         TreeNode t2 = new TreeNode(2);
@@ -22,6 +29,8 @@ public class LearningTreeTest extends CommonTest {
         t6.right = t7;
 
         System.out.println(climbStairs(5));
+
+        assertTrue(true);
     }
 
     private int traverse(TreeNode t) {
@@ -86,13 +95,6 @@ public class LearningTreeTest extends CommonTest {
             return d;
         else
             return dl > dr ? dl : dr;
-    }
-
-    public class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
-      TreeNode(int x) { val = x; }
     }
 
     public int climbStairs(int n) {
